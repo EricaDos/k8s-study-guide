@@ -12,4 +12,21 @@ K8s service is configured with a virtual IP that's redirected via kube-proxy to 
 Controlplane -> Node
 
 Primary Path: From API server to the kubelet process that runs on each node in the cluster
+User Case:
+- Fetching logs for pods
+- Attaching yto running pods
+- Providing kubelet's port-forwarding functionality
+
+By default, the API server does not verify the kubelet's serving certificate, which makes the connection subject to man-in-the-middle attacks and unsafe to run over untrusted and/or public networks.
+
+To verify this connection, use the `--kubelet-certificate-authority` flag to provide the API server with a root certificate bundle to use to verify the kubelet's serving certificate.
 Secondary: Service through the API server's proxy funcationality.
+
+Secondary Path: API server to nodes/pods/services
+Connections from API sertver to node/pod/service default to plain HTTP connections and are therefore netierh authenticated nor encrypted.
+Prefix `https:` to run over secure HTTPS connections
+
+Konnectivity service (replacement for depricated SSH Tunnels):
+the Konnectivity service provides TCP level proxy for the control plane to cluster communication. The Konnectivity service consists of two parts: the Konnectivity server in the control plane network and the Konnectivity agents in the nodes network. 
+
+# Controllers
