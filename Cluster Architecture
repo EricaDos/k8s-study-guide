@@ -1,0 +1,15 @@
+Communication between nodes and control plane
+
+Node -> Control Plane
+k8s Hub and spoke API Pattern.
+All API Uusage from nodes terminates at the API server.
+API Server is configured to listen form remote connections on secure 443 HTTPS port with 1 or more forms of client autneticatio, authorisation.
+Nodes provisioned witht the public root certificate for the cluster, to connect securly to the API server with valid client credentials.
+
+To connect to API server, Pods can use Service account to automatically nject the public root certifiate and valid bearer token into the pod whne instntiated.
+K8s service is configured with a virtual IP that's redirected via kube-proxy to the HTTPS endpoing on the API server.
+
+Controlplane -> Node
+
+Primary Path: From API server to the kubelet process that runs on each node in the cluster
+Secondary: Service through the API server's proxy funcationality.
