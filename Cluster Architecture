@@ -82,7 +82,7 @@ A cluster-level logging mechanism is responsible for saving container logs to a 
 Network Plugins
 Network plugins are software components that implement the container network interface (CNI) specification. They are responsible for allocating IP addresses to pods and enabling them to communicate with each other within the cluster.
 
-
+---------------
 
 Communication between nodes and control plane
 
