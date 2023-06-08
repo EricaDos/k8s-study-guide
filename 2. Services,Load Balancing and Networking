@@ -1,0 +1,93 @@
+K8s network model
+- Every pod in a cluster gets own unique cluster-wide IP address.
+  - Do not need to explicity create links between pods.
+ Fundatmental requirments
+ - Pods can communicate with all other pods on any other node without a Network Address Translation(NAT)
+  
+Container Network Interface (CNI)
+ Container runtimes must create network namespace
+ Identity network the container must attach to
+ Container Runtime to invoke Network Plugin(bridge) when container is ADDed and DELeted
+ 
+ Kublet is invoking the CNI as that kublet needs to configure the correct network plugin.
+`ps -aux | grep kubelet` has all the CNI info 
+cni-bin-dir : `ls /opt/cni/bin`
+has all support cni plugin as executables (such as bridge, dhcp, flannel) 
+
+cni-conf-dir: `ls /etc/cni/net.d`
+has set of configuration files, kublets finds which plugin to use.
+
+Pod Networking
+ 
+ Networking Model
+ Every Pod Should:
+ 
+- Have an IP Address
+- Communicate with every other pod in the same node
+- Communicate with every other pod on other nodes without NAT.
+ 
+How do we solve this?
+
+3 Node clusters. We want to consider all nodes the same
+They are apart of an external network and has IP address 
+When containers are created k8s creates network namespace(nns) for them 
+Enable communication between them by attaching (nns) to a bridge network/interfaces on each node
+`ip link add v-net-0 type bridge` -> `ip link set dev v-net-0 up`
+
+Each bridge network will have its own private subnet network.
+Pod1: 10.244.1.1
+Assign each pod IP address to bridge interface `ip addr add 10.244.1.1/24 dev v-net-0`
+
+write a script that has all commands that can be run multiple times
+
+net-script.sh (manually)
+-----------------
+#Create veth pair
+ip link add ....
+
+#Aattach veth pair
+ip link set
+
+#Assign IP Address
+ip -n <namespace> addr add...
+ip -n <namespace> route add ...
+
+#Bring up interface
+ip -n <namespace> link set....
+
+repeat to remaining pods
+
+
+Part 2
+How to commiunicate with other pods on other nodes?
+
+create a routing tables
+
+Container Network Interface(CNI)
+Kubelet is responsible for creating each node
+Kubelet will look at CNI config passed as command line arg , looks into bin dir to find script
+
+runs it `./net-script.sh add <container><namespace>`
+net-script.sh (automatically)
+-----------------
+#Create veth pair
+ip link add ....
+#Aattach beth pai
+ip link set
+#Assign IP Address
+ip -n <namespace> addr add...
+ip -n <namespace> route add ...
+#Bring up interface
+ip -n <namespace> link set....
+
+#Delete veth pair
+ip link del ...
+
+
+Weaveworks (CNI)
+
+instead of own customer CNI script we will use weaveworks to 
+Weaveworks CNI Plugin is deployed in a cluster, deploys agent inn each node
+Each agent/peer stores a topology of entire setup
+Weave creates its own bridge called 'WEAVE'on each nods and assigns ip to each networks
+A single dock can have multiple different networks, depending on route configured on the container.

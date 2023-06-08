@@ -1,7 +1,0 @@
-K8s network model
-- Every pod in a cluster gets own unique cluster-wide IP address.
-  - Do not need to explicity create links between pods.
- Fundatmental requirments
- - Pods cxan communicate with all other pods on any other node without a Network Address Translation(NAT)
- 
- 
