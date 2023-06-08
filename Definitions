@@ -5,3 +5,8 @@ Reverse Proxy:
 - Here request comes to webserver or transferred to another webserver , second webserver is responsible for retrieving the data and giving response back to client in same way.
 - Its performing other activities like TSL encryption, Caching,load balancing , privacy and security.
 - Its controls the accessing of the server.          
+
+Kubectl Port-forwarding: 
+Method to access, interact and manage interneal k8s clusters directly from your local network.
+
+CNI
